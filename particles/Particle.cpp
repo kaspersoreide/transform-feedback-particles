@@ -5,25 +5,27 @@ float random(float min, float max) {
 	return n * (max - min) + min;
 }
 
-Particle::Particle(int n, GLuint _renderProgram, GLuint _transformProgram) {
+Particle::Particle(int n, GLuint _renderProgram, GLuint _transformProgram, vec3 pos, float radius) {
 	particleCount = n;
 	renderProgram = _renderProgram;
 	transformProgram = _transformProgram;
 
 	std::vector<float> bufferData;
 	for (int i = 0; i < n; i++) {
+		vec3 p(random(-1.0, 1.0), random(-1.0, 1.0), random(-1.0, 1.0));
+		p = pos + normalize(p) * random(radius, 1.2f * radius);
 		//position
-		bufferData.push_back(random(-1.0, 1.0));
-		bufferData.push_back(random(-1.0, 1.0));
-		bufferData.push_back(random(-1.0, 1.0));
+		bufferData.push_back(p[0]);
+		bufferData.push_back(p[1]);
+		bufferData.push_back(p[2]);
 		//velocity
 		bufferData.push_back(0.0f);
 		bufferData.push_back(0.0f);
 		bufferData.push_back(0.0f);
 		//color
-		bufferData.push_back(random(0.0, 1.0) / 4);
-		bufferData.push_back(random(0.0, 1.0) / 2);
 		bufferData.push_back(random(0.0, 1.0));
+		bufferData.push_back(random(0.0, 1.0) / 3);
+		bufferData.push_back(random(0.0, 1.0) / 3);
 	}
 
 	glGenVertexArrays(1, &VAO);
@@ -85,7 +87,12 @@ void Particle::doStuff(){
 	glDisable(GL_RASTERIZER_DISCARD);
 	glDrawArrays(GL_POINTS, 0, particleCount);
 
+	//GLuint temp = TBO;
+	//TBO = VAO;
+	//VAO = temp;
+
 	GLuint temp = TBO;
-	TBO = VAO;
-	VAO = temp;
+	TBO = VBO;
+	VBO = temp;
+
 }

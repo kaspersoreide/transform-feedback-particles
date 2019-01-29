@@ -170,11 +170,13 @@
     <ClCompile Include="loadShaders.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Singularity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="loadShaders.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="Singularity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.shader" />

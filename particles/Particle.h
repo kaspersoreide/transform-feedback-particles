@@ -15,7 +15,7 @@ float random(float min, float max);
 
 class Particle {
 public:
-	Particle(int n, GLuint _renderProgram, GLuint _transformProgram);
+	Particle(int n, GLuint _renderProgram, GLuint _transformProgram, vec3 pos, float radius);
 	void doStuff();
 protected:
 	GLuint VBO, TBO, VAO, renderProgram, transformProgram;

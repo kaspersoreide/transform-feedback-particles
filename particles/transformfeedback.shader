@@ -8,16 +8,22 @@ out vec3 outPos;
 out vec3 outVel;
 out vec3 outColor;
 
+uniform vec3 singularity;
+uniform float radius;
+
 void main() {
-	float dist2 = dot(inPos, inPos);
-	vec3 rot = normalize(cross(inPos, vec3(0.0, 0.0, 1.0)));
-	vec3 vel = inVel + 0.0000001 * rot;
-	vel -= 0.000001 * inPos / dist2;
-	if (dist2 < 0.5) {
-		//vel -= vel * 2 * dot(vel, normalize(inPos));
+	vec3 vel = inVel;
+	vec3 pos = inPos;
+	vec3 d = singularity - inPos;
+	if (dot(d, d) < radius && dot(vel, d) > 0.0) {
+		pos -= vel;
+		vel *= -1.0;
 	}
-	vel *= 0.9999;
+	else {
+		vel += 0.00001 * d / dot(d, d);
+		vel *= 0.9999;
+	}
 	outVel = vel;
 	outPos = inPos + vel;
-	outColor = inColor;
+	outColor = normalize(d);
 }

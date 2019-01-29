@@ -13,6 +13,7 @@
 #include "Particle.h"
 #include "loadShaders.h"
 #include "Camera.h"
+#include "Singularity.h"
 
 using namespace std;
 
@@ -112,7 +113,7 @@ int init() {
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	glPointSize(3.0f);
+	glPointSize(1.0f);
 	glClearColor(0.0, 0.0, 0.0, 0.01);
 
 	int error = glGetError();
@@ -131,10 +132,10 @@ int main(void) {
 	GLuint transformProgram = loadTransformShader();
 
 	glm::mat4 Projection = glm::perspective(
-		1.2f, 
+		1.5f, 
 		static_cast<float>(1),			//(float)width / height, 
-		0.1f, 
-		100.0f
+		0.001f, 
+		1000.0f
 	);
 	glm::mat4 View = glm::lookAt(
 		glm::vec3(0.0f, 0.0f, -3.0f),
@@ -146,9 +147,13 @@ int main(void) {
 	GLint l_VP(glGetUniformLocation(renderProgram, "ViewProjection"));
 	glUniformMatrix4fv(l_VP, 1, GL_FALSE, &ViewProjection[0][0]);
 
-	Particle p(10000, renderProgram, transformProgram);
+	//Particle p(10000, renderProgram, transformProgram);
 
-	p.doStuff();
+	std::vector<Singularity*> voids;
+	for (int i = 0; i < 50; i++) {
+		vec3 pos(random(-20.0f, 20.0f), random(-20.0f, 20.0f), random(-20.0f, 20.0f));
+		voids.push_back(new Singularity(pos, renderProgram, transformProgram));
+	}
 
 	int error = glGetError();
 	
@@ -160,8 +165,15 @@ int main(void) {
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		p.doStuff();
+		
+		for (int i = 0; i < voids.size(); i++) {
+			for (int j = 0; j < voids.size(); j++) {
+				if (i == j) continue;
+				voids[i]->gravitate(*voids[j]);
+				voids[i]->collide(*voids[j]);
+			}
+			voids[i]->move();
+		}
 
 		camera.move(0.1f);
 		camera.rotate(0.1f);
