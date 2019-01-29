@@ -25,5 +25,5 @@ void main() {
 	}
 	outVel = vel;
 	outPos = inPos + vel;
-	outColor = normalize(d);
+	outColor = normalize(cross(inPos, inVel));
 }
